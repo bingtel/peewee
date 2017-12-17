@@ -68,6 +68,7 @@ except ImportError:
     from queue import Queue
 
 try:
+    # for PostgreSQL
     from psycopg2 import extensions as pg_extensions
 except ImportError:
     pg_extensions = None
@@ -92,13 +93,20 @@ class PooledDatabase(object):
     def __init__(self, database, max_connections=20, stale_timeout=None,
                  timeout=None, **kwargs):
         self.max_connections = make_int(max_connections)
+        # 保质期
         self.stale_timeout = make_int(stale_timeout)
+        # 连接-超时 时间
         self.timeout = make_int(timeout)
+        # 永不超时
         if self.timeout == 0:
             self.timeout = float('inf')
+        # 已关闭的连接
         self._closed = set()
+        # 所有的连接
         self._connections = []
+        # 使用中的<连接, 开始使用的时间戳>
         self._in_use = {}
+        # 映射connection对象的方法
         self.conn_key = id
 
         if self.timeout:
@@ -153,6 +161,7 @@ class PooledDatabase(object):
                     # (Because Database.close() calls Database._close()).
                     logger.debug('Connection %s was closed.', key)
                     ts = conn = None
+                    # 该连接不在是closed状态
                     self._closed.discard(key)
                 elif self.stale_timeout and self._is_stale(ts):
                     # If we are attempting to check out a stale connection,

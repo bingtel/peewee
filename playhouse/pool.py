@@ -117,6 +117,8 @@ class PooledDatabase(object):
 
     def init(self, database, max_connections=None, stale_timeout=None,
              timeout=None, **connect_kwargs):
+        """和class Database同名,进而覆盖
+        """
         super(PooledDatabase, self).init(database, **connect_kwargs)
         if max_connections is not None:
             self.max_connections = make_int(max_connections)

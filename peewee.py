@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # May you do good and not evil
 # May you find forgiveness for yourself and forgive others
 # May you share freely, never taking more than you give.  -- SQLite source code
@@ -3639,6 +3640,7 @@ class Database(object):
         if not self.is_closed():
             self.close()
         self.deferred = database is None
+        # 数据库名称
         self.database = database
         self.connect_kwargs.update(connect_kwargs)
 
@@ -4202,7 +4204,7 @@ class MySQLDatabase(Database):
     }
     for_update = True
     interpolation = '%s'
-    limit_max = 2 ** 64 - 1  # MySQL quirk
+    limit_max = 2 ** 64 - 1  # MySQL quirk 怪癖
     op_overrides = {
         OP.LIKE: 'LIKE BINARY',
         OP.ILIKE: 'LIKE',
@@ -4278,6 +4280,8 @@ class MySQLDatabase(Database):
             SQL('VALUES (DEFAULT)'))
 
     def get_noop_sql(self):
+        u"""获取空操作SQL
+        """
         return 'DO 0'
 
     def get_binary_type(self):
@@ -4704,6 +4708,7 @@ class ModelOptions(object):
         return self.rel_for_model(model) or self.reverse_rel_for_model(model)
 
     def related_models(self, backrefs=False):
+        # 层次遍历
         models = []
         stack = [self.model_class]
         while stack:
